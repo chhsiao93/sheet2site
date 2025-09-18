@@ -22,7 +22,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
 
     - name: Install dependencies
       run: npm install
@@ -36,8 +35,8 @@ jobs:
     - name: Setup environment variables
       run: |
         echo "GOOGLE_SHEET_URL=${{ secrets.GOOGLE_SHEET_URL }}" >> $GITHUB_ENV
-        echo "SITE_TITLE=${{ secrets.SITE_TITLE || 'Sheet2Site' }}" >> $GITHUB_ENV
-        echo "SITE_DESCRIPTION=${{ secrets.SITE_DESCRIPTION || 'Website generated from Google Drive and Sheets' }}" >> $GITHUB_ENV
+        echo "SITE_TITLE=${{ secrets.SITE_TITLE }}" >> $GITHUB_ENV
+        echo "SITE_DESCRIPTION=${{ secrets.SITE_DESCRIPTION }}" >> $GITHUB_ENV
 
     - name: Fetch content from Google Sheets
       run: npm run fetch-content
