@@ -1,0 +1,56 @@
+name: Build and Deploy Site
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run every hour to check for content updates
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v3
+      with:
+        hugo-version: 'latest'
+        extended: true
+
+    - name: Setup environment variables
+      run: |
+        echo "GOOGLE_SHEET_URL=${{ secrets.GOOGLE_SHEET_URL }}" >> $GITHUB_ENV
+        echo "SITE_TITLE=${{ secrets.SITE_TITLE || 'Sheet2Site' }}" >> $GITHUB_ENV
+        echo "SITE_DESCRIPTION=${{ secrets.SITE_DESCRIPTION || 'Website generated from Google Drive and Sheets' }}" >> $GITHUB_ENV
+
+    - name: Fetch content from Google Sheets
+      run: npm run fetch-content
+
+    - name: Build Tailwind CSS
+      run: npx tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --minify
+
+    - name: Build Hugo site
+      run: hugo --minify
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public

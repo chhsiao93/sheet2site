@@ -1,0 +1,4 @@
+name = "Sheet2Site Theme"
+license = "MIT"
+description = "A theme for websites generated from Google Drive and Sheets"
+min_version = "0.116.0"

@@ -1,0 +1,33 @@
+{{ define "main" }}
+<div class="max-w-6xl mx-auto">
+    <header class="text-center mb-16">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">{{ .Site.Title }}</h1>
+        <p class="text-xl text-gray-600">{{ .Site.Params.description }}</p>
+    </header>
+
+    {{ if .Site.RegularPages }}
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Latest Content</h2>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {{ range first 6 .Site.RegularPages }}
+            <article class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-3">
+                    <a href="{{ .Permalink }}" class="text-blue-600 hover:text-blue-800">
+                        {{ .Title }}
+                    </a>
+                </h3>
+                {{ if .Summary }}
+                <p class="text-gray-600 mb-4">{{ .Summary }}</p>
+                {{ end }}
+                {{ if .Date }}
+                <time class="text-sm text-gray-500" datetime="{{ .Date.Format "2006-01-02" }}">
+                    {{ .Date.Format "January 2, 2006" }}
+                </time>
+                {{ end }}
+            </article>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
+</div>
+{{ end }}

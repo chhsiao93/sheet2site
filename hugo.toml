@@ -1,0 +1,12 @@
+baseURL = 'https://example.org'
+languageCode = 'en-us'
+title = 'Sheet2Site'
+theme = 'sheet2site-theme'
+
+[params]
+  description = 'Website generated from Google Drive and Sheets'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

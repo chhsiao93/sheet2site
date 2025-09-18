@@ -1,0 +1,28 @@
+{
+  "name": "sheet2site",
+  "version": "1.0.0",
+  "description": "Generate Hugo websites from Google Drive and Google Sheets",
+  "main": "scripts/build.js",
+  "scripts": {
+    "fetch-content": "node scripts/fetch-content.js",
+    "build-css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch",
+    "build": "npm run fetch-content && hugo --minify",
+    "dev": "hugo server -D",
+    "deploy": "npm run build"
+  },
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "fs-extra": "^11.2.0",
+    "dotenv": "^16.4.5",
+    "axios": "^1.7.2",
+    "yaml": "^2.4.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "tailwindcss": "^3.4.3",
+    "@tailwindcss/typography": "^0.5.12"
+  },
+  "keywords": ["google-drive", "google-sheets", "static-site", "cms", "github-actions"],
+  "author": "Cheng-Hsi Hsiao",
+  "license": "MIT"
+}
