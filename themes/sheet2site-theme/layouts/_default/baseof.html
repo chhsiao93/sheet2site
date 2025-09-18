@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
     <meta name="description" content="{{ .Site.Params.description }}">
-    {{ $styles := resources.Get "css/input.css" | resources.PostCSS }}
+    {{ $styles := resources.Get "css/input.css" | css.PostCSS }}
     <link rel="stylesheet" href="{{ $styles.RelPermalink }}">
 </head>
 <body class="bg-gray-50 text-gray-900">
