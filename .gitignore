@@ -8,6 +8,8 @@ npm-debug.log*
 # Hugo build output
 public/
 resources/
+.hugo_build.lock
+static/
 
 # Temporary files
 temp/

@@ -11,6 +11,12 @@
         {{ end }}
     </header>
 
+    {{ if .Params.image }}
+    <div class="mb-8">
+        <img src="{{ .Params.image }}" alt="{{ .Title }}" class="w-full h-auto rounded-lg shadow-lg">
+    </div>
+    {{ end }}
+
     <div class="prose prose-lg max-w-none">
         {{ .Content }}
     </div>

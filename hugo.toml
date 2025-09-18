@@ -1,4 +1,4 @@
-baseURL = 'https://example.org'
+baseURL = 'https://chhsiao93.github.io/sheet2site'
 languageCode = 'en-us'
 title = 'Sheet2Site'
 theme = 'sheet2site-theme'
