@@ -1,12 +1,12 @@
 <header class="bg-white shadow-sm">
     <nav class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold text-blue-600">
+            <a href="{{ "/" | relURL }}" class="text-2xl font-bold text-blue-600">
                 {{ .Site.Title }}
             </a>
 
             <div class="hidden md:flex space-x-8">
-                <a href="/" class="text-gray-700 hover:text-blue-600">Home</a>
+                <a href="{{ "/" | relURL }}" class="text-gray-700 hover:text-blue-600">Home</a>
                 {{ range .Site.Menus.main }}
                 <a href="{{ .URL }}" class="text-gray-700 hover:text-blue-600">{{ .Name }}</a>
                 {{ end }}
