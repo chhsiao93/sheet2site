@@ -3,6 +3,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const csv = require('csv-parser');
 const YAML = require('yaml');
+
+// Load .env file for local development, but environment variables take precedence
 require('dotenv').config();
 
 function extractFileIdFromUrl(url) {
@@ -262,8 +264,21 @@ async function main() {
       contact: process.env.CONTACT_URL
     };
 
+    // Debug: Log environment detection
+    console.log('Environment detection:');
+    console.log('- Running in:', process.env.NODE_ENV || 'development');
+    console.log('- GitHub Actions:', process.env.GITHUB_ACTIONS ? 'Yes' : 'No');
+    console.log('- Available URLs:');
+    Object.entries(urls).forEach(([key, value]) => {
+      console.log(`  - ${key}: ${value ? '✓ Set' : '✗ Missing'}`);
+    });
+
     // Check if required URLs are present
     if (!urls.services || !urls.projects || !urls.contact) {
+      console.error('Missing required environment variables:');
+      if (!urls.services) console.error('- SERVICE_URL is missing');
+      if (!urls.projects) console.error('- PROJECT_URL is missing');
+      if (!urls.contact) console.error('- CONTACT_URL is missing');
       throw new Error('SERVICE_URL, PROJECT_URL, and CONTACT_URL environment variables are required');
     }
 

@@ -34,9 +34,14 @@ jobs:
 
     - name: Setup environment variables
       run: |
-        echo "GOOGLE_SHEET_URL=${{ secrets.GOOGLE_SHEET_URL }}" >> $GITHUB_ENV
+        echo "POST_URL=${{ secrets.POST_URL }}" >> $GITHUB_ENV
+        echo "SERVICE_URL=${{ secrets.SERVICE_URL }}" >> $GITHUB_ENV
+        echo "PROJECT_URL=${{ secrets.PROJECT_URL }}" >> $GITHUB_ENV
+        echo "CONTACT_URL=${{ secrets.CONTACT_URL }}" >> $GITHUB_ENV
+        echo "GOOGLE_DRIVE_FOLDER_URL=${{ secrets.GOOGLE_DRIVE_FOLDER_URL }}" >> $GITHUB_ENV
         echo "SITE_TITLE=${{ secrets.SITE_TITLE }}" >> $GITHUB_ENV
         echo "SITE_DESCRIPTION=${{ secrets.SITE_DESCRIPTION }}" >> $GITHUB_ENV
+        echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
 
     - name: Fetch content from Google Sheets
       run: npm run fetch-content
