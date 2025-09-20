@@ -1,20 +1,25 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.LanguageCode | default "en" }}">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
-    <meta name="description" content="{{ .Site.Params.description }}">
-    {{ $styles := resources.Get "css/input.css" | css.PostCSS }}
-    <link rel="stylesheet" href="{{ $styles.RelPermalink }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ .Title }}</title>
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-900">
-    {{ partial "header.html" . }}
+<body>
+  <main class="mx-auto">
+    {{ block "main" . }}{{ end }}
+  </main>
 
-    <main class="container mx-auto px-4 py-8">
-        {{ block "main" . }}{{ end }}
-    </main>
-
-    {{ partial "footer.html" . }}
+  <footer class="text-gray-600 bg-gray-50 py-4 text-sm text-center">
+    © {{ now.Year }} {{ .Site.Title }}
+  </footer>
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
 </body>
 </html>

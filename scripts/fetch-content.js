@@ -128,30 +128,189 @@ async function generateHugoContent(data) {
   }
 }
 
+async function processServices(data) {
+  const services = [];
+  for (const row of data) {
+    if (!row.title || !row.description) continue;
+
+    let imagePath = null;
+    if (row.img && row.img.includes('drive.google.com')) {
+      const slug = createSlug(row.title);
+      const imageName = `service-${slug}.jpg`;
+      imagePath = await downloadFileFromDrive(row.img, imageName);
+    }
+
+    services.push({
+      title: row.title,
+      description: row.description,
+      icon: row.icon || '⚡',
+      image: imagePath
+    });
+  }
+  return services;
+}
+
+async function processProjects(data) {
+  const projects = [];
+  for (const row of data) {
+    if (!row.title || !row.description) continue;
+
+    let imagePath = null;
+    if (row.img && row.img.includes('drive.google.com')) {
+      const slug = createSlug(row.title);
+      const imageName = `project-${slug}.jpg`;
+      imagePath = await downloadFileFromDrive(row.img, imageName);
+    }
+
+    projects.push({
+      title: row.title,
+      description: row.description,
+      image: imagePath,
+      url: row.url || '#'
+    });
+  }
+  return projects;
+}
+
+async function processContact(data) {
+  const contact = {};
+  for (const row of data) {
+    if (row.field && row.value) {
+      contact[row.field] = row.value;
+    }
+  }
+  return contact;
+}
+
+async function updateHugoConfig(services, projects, contact) {
+  const configPath = './hugo.toml';
+
+  // Read existing config
+  let config = '';
+  if (await fs.pathExists(configPath)) {
+    config = await fs.readFile(configPath, 'utf8');
+  }
+
+  // Generate new params section
+  const paramsConfig = `
+[params]
+  description = '${process.env.SITE_DESCRIPTION || 'Website generated from Google Drive and Sheets'}'
+  hero_image = '/images/hero.jpg'
+
+  # Services section
+${services.map((service, index) => `
+  [[params.services]]
+    title = '${service.title}'
+    description = '${service.description}'
+    icon = '${service.icon}'
+    ${service.image ? `image = '${service.image}'` : ''}
+`).join('')}
+
+  # Projects section
+${projects.map((project, index) => `
+  [[params.projects]]
+    title = '${project.title}'
+    description = '${project.description}'
+    ${project.image ? `image = '${project.image}'` : ''}
+    url = '${project.url}'
+`).join('')}
+
+  # Contact information
+  [params.contact]
+    email = '${contact.email || 'hello@example.com'}'
+    phone = '${contact.phone || ''}'
+    address = '${contact.address || ''}'
+`;
+
+  // Update or append params section
+  const baseConfigMatch = config.match(/^(.*?)(\[params\].*?)?(\[markup\].*)?$/s);
+  let newConfig;
+
+  if (baseConfigMatch) {
+    const baseConfig = baseConfigMatch[1];
+    const markupConfig = baseConfigMatch[3] || `
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+`;
+    newConfig = baseConfig + paramsConfig + markupConfig;
+  } else {
+    // If config doesn't exist, create basic structure
+    newConfig = `baseURL = "${process.env.BASE_URL || 'https://example.org/'}"
+languageCode = 'en-us'
+title = '${process.env.SITE_TITLE || 'Sheet2Site'}'
+theme = 'sheet2site-theme'
+${paramsConfig}
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+`;
+  }
+
+  await fs.writeFile(configPath, newConfig);
+  console.log('Updated hugo.toml with new configuration');
+}
+
 async function main() {
   try {
-    const sheetUrl = process.env.GOOGLE_SHEET_URL;
-    if (!sheetUrl) {
-      throw new Error('GOOGLE_SHEET_URL environment variable is required');
+    const urls = {
+      posts: process.env.POST_URL,
+      services: process.env.SERVICE_URL,
+      projects: process.env.PROJECT_URL,
+      contact: process.env.CONTACT_URL
+    };
+
+    // Check if required URLs are present
+    if (!urls.services || !urls.projects || !urls.contact) {
+      throw new Error('SERVICE_URL, PROJECT_URL, and CONTACT_URL environment variables are required');
     }
 
     console.log('Fetching content from Google Sheets...');
 
-    // Download the sheet
-    const csvPath = './temp/content.csv';
-    await downloadGoogleSheet(sheetUrl, csvPath);
+    // Process Posts (if URL exists)
+    if (urls.posts) {
+      console.log('Processing posts...');
+      const postsPath = './temp/posts.csv';
+      await downloadGoogleSheet(urls.posts, postsPath);
+      const postsData = await parseCSV(postsPath);
+      await generateHugoContent(postsData);
+      console.log(`Generated ${postsData.length} posts`);
+    }
 
-    // Parse the CSV
-    const data = await parseCSV(csvPath);
-    console.log(`Found ${data.length} rows of content`);
+    // Process Services
+    console.log('Processing services...');
+    const servicesPath = './temp/services.csv';
+    await downloadGoogleSheet(urls.services, servicesPath);
+    const servicesData = await parseCSV(servicesPath);
+    const services = await processServices(servicesData);
+    console.log(`Processed ${services.length} services`);
 
-    // Generate Hugo content
-    await generateHugoContent(data);
+    // Process Projects
+    console.log('Processing projects...');
+    const projectsPath = './temp/projects.csv';
+    await downloadGoogleSheet(urls.projects, projectsPath);
+    const projectsData = await parseCSV(projectsPath);
+    const projects = await processProjects(projectsData);
+    console.log(`Processed ${projects.length} projects`);
 
-    // Clean up temp file
+    // Process Contact
+    console.log('Processing contact info...');
+    const contactPath = './temp/contact.csv';
+    await downloadGoogleSheet(urls.contact, contactPath);
+    const contactData = await parseCSV(contactPath);
+    const contact = await processContact(contactData);
+    console.log('Processed contact information');
+
+    // Update Hugo configuration
+    await updateHugoConfig(services, projects, contact);
+
+    // Clean up temp files
     await fs.remove('./temp');
 
     console.log('Content generation complete!');
+    console.log('Run "hugo server" to view your updated site');
   } catch (error) {
     console.error('Error:', error.message);
     process.exit(1);

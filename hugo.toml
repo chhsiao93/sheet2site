@@ -1,11 +1,61 @@
-baseURL = 'https://chhsiao93.github.io/sheet2site'
+baseURL = "https://example.org/"
 languageCode = 'en-us'
 title = 'Sheet2Site'
 theme = 'sheet2site-theme'
 
-[params]
-  description = 'Website generated from Google Drive and Sheets'
 
+
+[params]
+  description = 'Generated from Google Drive and Sheets'
+  hero_image = '/images/hero.jpg'
+
+  # Services section
+
+  [[params.services]]
+    title = 'tunneling'
+    description = 'some text'
+    icon = '⚡'
+    image = '/images/service-tunneling.jpg'
+
+  [[params.services]]
+    title = 'deep foundation'
+    description = 'some text'
+    icon = '⚡'
+    image = '/images/service-deep-foundation.jpg'
+
+  [[params.services]]
+    title = 'pipeline'
+    description = 'some text'
+    icon = '⚡'
+    image = '/images/service-pipeline.jpg'
+
+
+  # Projects section
+
+  [[params.projects]]
+    title = 'project1'
+    description = 'some text'
+    
+    url = '#'
+
+  [[params.projects]]
+    title = 'project2'
+    description = 'some text some text'
+    
+    url = '#'
+
+  [[params.projects]]
+    title = 'project3'
+    description = 'some text some text some text'
+    
+    url = '#'
+
+
+  # Contact information
+  [params.contact]
+    email = 'chhsiao@utexas.edu'
+    phone = '+1 (765) 400 8641'
+    address = '"123 Main Street, City, State 12345"'
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
